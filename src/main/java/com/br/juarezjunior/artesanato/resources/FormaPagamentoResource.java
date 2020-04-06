@@ -15,30 +15,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.br.juarezjunior.artesanato.entities.Cliente;
-import com.br.juarezjunior.artesanato.services.ClienteService;
+import com.br.juarezjunior.artesanato.entities.FormaPagamento;
+import com.br.juarezjunior.artesanato.services.FormaPagamentoService;
 
 @RestController
-@RequestMapping (value="/clientes")
-public class ClienteResource {
+@RequestMapping(value = "/formaPagamentos")
+public class FormaPagamentoResource {
 
 	@Autowired
-	private ClienteService service;
+	private FormaPagamentoService service;
 
 	@GetMapping
-	public ResponseEntity<List<Cliente>> findAll(){
-		List<Cliente> list = service.findAll();
+	public ResponseEntity<List<FormaPagamento>> findAll() {
+
+		List<FormaPagamento> list = service.findAll();
+
 		return ResponseEntity.ok().body(list);
 	}
-	
+
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Cliente> findById(@PathVariable Long id){
-		Cliente obj = service.findById(id);
+	public ResponseEntity<FormaPagamento> findById(@PathVariable Long id) {
+		FormaPagamento obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
-	
 	@PostMapping
-	public ResponseEntity<Cliente> insert(@RequestBody Cliente obj){
+	public ResponseEntity<FormaPagamento> insert(@RequestBody FormaPagamento obj){
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getCodigo()).toUri();
 		return ResponseEntity.created(uri).body(obj);
@@ -51,8 +52,9 @@ public class ClienteResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Cliente> update(@PathVariable Long id, @RequestBody Cliente obj){
+	public ResponseEntity<FormaPagamento> update(@PathVariable Long id, @RequestBody FormaPagamento obj){
 		obj = service.update(id, obj);
 		return ResponseEntity.ok().body(obj);
 	}
+
 }

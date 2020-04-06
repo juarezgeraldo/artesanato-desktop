@@ -10,27 +10,26 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.br.juarezjunior.artesanato.entities.Cliente;
-import com.br.juarezjunior.artesanato.repositories.ClienteRepository;
+import com.br.juarezjunior.artesanato.entities.Pagamento;
+import com.br.juarezjunior.artesanato.repositories.PagamentoRepository;
 import com.br.juarezjunior.artesanato.services.exceptions.DatabaseException;
 import com.br.juarezjunior.artesanato.services.exceptions.ResourceNotFoundException;
 
 @Service
-public class ClienteService {
+public class PagamentoService {
 
 	@Autowired
-	private ClienteRepository repository;
+	private PagamentoRepository repository;
 
-	public List<Cliente> findAll() {
+	public List<Pagamento> findAll(){
 		return repository.findAll();
 	}
-
-	public Cliente findById(Long id) {
-		Optional<Cliente> obj = repository.findById(id);
+	
+	public Pagamento findById(Long id) {
+		Optional<Pagamento> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
-
-	public Cliente insert(Cliente obj) {
+	public Pagamento insert(Pagamento obj) {
 		return repository.save(obj);
 	}
 
@@ -44,22 +43,19 @@ public class ClienteService {
 		}
 	}
 
-	public Cliente update(Long id, Cliente obj) {
+	public Pagamento update(Long id, Pagamento obj) {
 		try {
-			Cliente entity = repository.getOne(id);
+			Pagamento entity = repository.getOne(id);
 			updateData(entity, obj);
 			return repository.save(entity);
 		}catch (EntityNotFoundException e){
 			throw new ResourceNotFoundException(id);
-			
 		}
 	}
 
-	private void updateData(Cliente entity, Cliente obj) {
-		entity.setEndereco(obj.getEndereco());
-		entity.setNome(obj.getNome());
-		entity.setNumeroTel1(obj.getNumeroTel1());
-		entity.setNumeroTel2(obj.getNumeroTel2());
-		entity.setObservacao(obj.getObservacao());
+	private void updateData(Pagamento entity, Pagamento obj) {
+		entity.setData(obj.getData());
+		entity.setValor(obj.getValor());
 	}
+
 }

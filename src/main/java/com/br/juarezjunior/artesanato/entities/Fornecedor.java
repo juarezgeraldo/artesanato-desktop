@@ -1,22 +1,22 @@
 package com.br.juarezjunior.artesanato.entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 @Entity
-@Table(name = "tb_cliente")
-public class Cliente implements Serializable{
-	
+@Table(name = "tb_fornecedor")
+public class Fornecedor implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -27,15 +27,16 @@ public class Cliente implements Serializable{
 	private Double numeroTel2;
 	private String endereco;
 	private String observacao;
-	
+
 	@JsonIgnore
-	@OneToMany(mappedBy = "cliente")
-	private List<Pedido> pedidos = new ArrayList<>();
-	
-	public Cliente() {
+	@ManyToMany(mappedBy = "fornecedores")
+	private Set<Produto> produtos = new HashSet<>();
+
+	public Fornecedor() {
 	}
 
-	public Cliente(Long codigo, String nome, Double numeroTel1, Double numeroTel2, String endereco, String observacao) {
+	public Fornecedor(Long codigo, String nome, Double numeroTel1, Double numeroTel2, String endereco,
+			String observacao) {
 		super();
 		this.codigo = codigo;
 		this.nome = nome;
@@ -93,27 +94,10 @@ public class Cliente implements Serializable{
 		this.observacao = observacao;
 	}
 
-	public List<Pedido> getPedidos() {
-		return pedidos;
-	}
-	
-	public Double getVendaRealizada() {
-		double soma = 0;
-		for (Pedido x : pedidos) {
-			soma = soma + x.getTotal();
-		}
-		return soma;
+	public Set<Produto> getProdutos() {
+		return produtos;
 	}
 
-	public Double getValorDevido() {
-		double soma = 0;
-		for (Pedido x : pedidos) {
-			soma = soma + x.getTotal() - x.getValorPago();
-		}
-		return soma;
-	}
-
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -130,7 +114,7 @@ public class Cliente implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Cliente other = (Cliente) obj;
+		Fornecedor other = (Fornecedor) obj;
 		if (codigo == null) {
 			if (other.codigo != null)
 				return false;
@@ -138,7 +122,5 @@ public class Cliente implements Serializable{
 			return false;
 		return true;
 	}
-
 	
-
 }

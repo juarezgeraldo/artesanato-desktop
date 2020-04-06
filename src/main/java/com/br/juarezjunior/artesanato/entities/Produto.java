@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,6 +26,7 @@ public class Produto implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
 	private String nome;
+	private Integer quantidadeEstoque;
 	private Double custoMedio;
 	private Double precoVenda;
 	private Integer estoqueMinimo;
@@ -35,17 +37,29 @@ public class Produto implements Serializable{
 				inverseJoinColumns = @JoinColumn(name = "categoria_id"))
 	private Set<Categoria> categorias = new HashSet<>();
 	
+	@ManyToMany
+	@JoinTable(name = "tb_produto_fornecedor", 
+				joinColumns = @JoinColumn(name = "produto_id"),
+				inverseJoinColumns = @JoinColumn(name = "fornecedor_id"))
+	private Set<Fornecedor> fornecedores = new HashSet<>();
+
+	
+	@OneToMany(mappedBy = "id.produto")
+	private Set<ItemPedido> itens = new HashSet<>();
 	public Produto() {
 	}
 
-	public Produto(Long codigo, String nome, Double custoMedio, Double precoVenda, Integer estoqueMinimo) {
+	public Produto(Long codigo, String nome, Integer quantidadeEstoque, Double custoMedio, Double precoVenda,
+			Integer estoqueMinimo) {
 		super();
 		this.codigo = codigo;
 		this.nome = nome;
+		this.quantidadeEstoque = quantidadeEstoque;
 		this.custoMedio = custoMedio;
 		this.precoVenda = precoVenda;
 		this.estoqueMinimo = estoqueMinimo;
 	}
+
 
 	public Long getCodigo() {
 		return codigo;
@@ -63,6 +77,14 @@ public class Produto implements Serializable{
 		this.nome = nome;
 	}
 
+	public Integer getQuantidadeEstoque() {
+		return quantidadeEstoque;
+	}
+
+//	public void setQuantidadeEstoque(Integer quantidadeEstoque) {
+//		this.quantidadeEstoque = quantidadeEstoque;
+//	}
+//
 	public Double getCustoMedio() {
 		return custoMedio;
 	}
@@ -91,6 +113,31 @@ public class Produto implements Serializable{
 		return categorias;
 	}
 
+	public Set<Fornecedor> getFornecedores() {
+		return fornecedores;
+	}
+	
+	@JsonIgnore
+	public Set<Pedido> getPedidos(){
+		Set<Pedido> set = new HashSet<>();
+		for (ItemPedido x : itens) {
+			set.add(x.getPedido());
+		}
+		return set;
+	}
+	
+	public void atualizaEstoque(Integer quantidade) {
+		this.quantidadeEstoque += quantidade;
+	}
+
+	public Double getValorTotalEstoqueVenda() {
+		return this.quantidadeEstoque * this.precoVenda;
+	}
+	
+	public Double getValorTotalEstoqueCusto() {
+		return this.quantidadeEstoque * this.custoMedio;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

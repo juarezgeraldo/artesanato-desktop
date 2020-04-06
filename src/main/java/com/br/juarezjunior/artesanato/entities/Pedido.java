@@ -2,6 +2,10 @@ package com.br.juarezjunior.artesanato.entities;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,10 +13,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.br.juarezjunior.artesanato.enums.StatusPedido;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_pedido")
@@ -32,15 +38,27 @@ public class Pedido implements Serializable {
 	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
 
+	@ManyToOne
+	@JoinColumn(name = "forma_pagamento_id")
+	private FormaPagamento formaPagamento;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "pedido")
+	private List<Pagamento> pagamentos = new ArrayList<>();
+
+	@OneToMany(mappedBy = "id.pedido")
+	private Set<ItemPedido> itens = new HashSet<>();
+	
 	public Pedido() {
 	}
 
-	public Pedido(Long codigo, Instant data, StatusPedido statusPedido, Cliente cliente) {
+	public Pedido(Long codigo, Instant data, StatusPedido statusPedido, Cliente cliente, FormaPagamento formaPagamento) {
 		super();
 		this.codigo = codigo;
 		this.data = data;
 		setStatusPedido(statusPedido);
 		this.cliente = cliente;
+		this.formaPagamento = formaPagamento;
 	}
 
 	public Long getCodigo() {
@@ -75,6 +93,38 @@ public class Pedido implements Serializable {
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
+	}
+	
+	public FormaPagamento getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public void setFormaPagamento(FormaPagamento formaPagamento) {
+		this.formaPagamento = formaPagamento;
+	}
+	
+	public Set<ItemPedido> getItens(){
+		return itens;
+	}
+
+	public List<Pagamento> getPagamento() {
+		return pagamentos;
+	}
+	
+	public Double getTotal() {
+		double soma = 0;
+		for (ItemPedido x : itens) {
+			soma = soma + x.getTotalItem();
+		}
+		return soma;
+	}
+	
+	public Double getValorPago() {
+		double soma = 0;
+		for (Pagamento x : pagamentos) {
+			soma = soma + x.getValor();
+		}
+		return soma;
 	}
 
 	@Override

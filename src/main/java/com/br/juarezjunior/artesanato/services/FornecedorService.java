@@ -10,27 +10,27 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import com.br.juarezjunior.artesanato.entities.Cliente;
-import com.br.juarezjunior.artesanato.repositories.ClienteRepository;
+import com.br.juarezjunior.artesanato.entities.Fornecedor;
+import com.br.juarezjunior.artesanato.entities.Fornecedor;
+import com.br.juarezjunior.artesanato.repositories.FornecedorRepository;
 import com.br.juarezjunior.artesanato.services.exceptions.DatabaseException;
 import com.br.juarezjunior.artesanato.services.exceptions.ResourceNotFoundException;
 
 @Service
-public class ClienteService {
-
+public class FornecedorService {
+	
 	@Autowired
-	private ClienteRepository repository;
-
-	public List<Cliente> findAll() {
+	private FornecedorRepository repository;
+	
+	public List<Fornecedor> findAll(){
 		return repository.findAll();
 	}
-
-	public Cliente findById(Long id) {
-		Optional<Cliente> obj = repository.findById(id);
+	
+	public Fornecedor findById(Long id) {
+		Optional<Fornecedor> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
-
-	public Cliente insert(Cliente obj) {
+	public Fornecedor insert(Fornecedor obj) {
 		return repository.save(obj);
 	}
 
@@ -44,22 +44,22 @@ public class ClienteService {
 		}
 	}
 
-	public Cliente update(Long id, Cliente obj) {
+	public Fornecedor update(Long id, Fornecedor obj) {
 		try {
-			Cliente entity = repository.getOne(id);
+			Fornecedor entity = repository.getOne(id);
 			updateData(entity, obj);
 			return repository.save(entity);
 		}catch (EntityNotFoundException e){
 			throw new ResourceNotFoundException(id);
-			
 		}
 	}
 
-	private void updateData(Cliente entity, Cliente obj) {
-		entity.setEndereco(obj.getEndereco());
+	private void updateData(Fornecedor entity, Fornecedor obj) {
 		entity.setNome(obj.getNome());
+		entity.setEndereco(obj.getEndereco());
 		entity.setNumeroTel1(obj.getNumeroTel1());
 		entity.setNumeroTel2(obj.getNumeroTel2());
 		entity.setObservacao(obj.getObservacao());
 	}
+
 }
